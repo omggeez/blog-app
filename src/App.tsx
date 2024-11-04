@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Router from "./components/Router";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "configs/firebase";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "components/Loader";
 
 function App() {
   const auth = getAuth(app);
+  const [init, setInit] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!auth.currentUser);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+
+      setTimeout(() => setInit(true), 1000);
+    });
+  }, [auth]);
 
   return (
     <>
       <ToastContainer />
-      <Router isLoggedIn={isLoggedIn} />
+      {init ? <Router isLoggedIn={isLoggedIn} /> : <Loader />}
     </>
   );
 }

@@ -1,10 +1,11 @@
 import { app } from "configs/firebase";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function SignupForm() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
@@ -17,7 +18,10 @@ export default function SignupForm() {
       const auth = getAuth(app);
       await createUserWithEmailAndPassword(auth, email, password);
 
-      toast.success("Success!");
+      toast.success("Signup Success!");
+      navigate("/");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.code);
     }
@@ -73,6 +77,7 @@ export default function SignupForm() {
           type="email"
           name="email"
           id="email"
+          value={email}
           onChange={onChange}
           required
         />
@@ -83,6 +88,7 @@ export default function SignupForm() {
           type="password"
           name="password"
           id="password"
+          value={password}
           onChange={onChange}
           required
         />
@@ -93,6 +99,7 @@ export default function SignupForm() {
           type="password"
           name="password_confirm"
           id="password_confirm"
+          value={passwordConfirm}
           onChange={onChange}
           required
         />
